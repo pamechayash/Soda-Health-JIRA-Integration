@@ -1,0 +1,179 @@
+<template>
+    <template if:true={isOpen}>
+        <div class="custom-dropdown">
+            <h2 class="dropdown-heading">What can we help you with?</h2>
+            <template for:each={issueTypes} for:item="item">
+                <div key={item.value} class="dropdown-item" data-value={item.value} onclick={handleSelect}>
+                    <div class="item-content">
+                        <div class="item-icon">
+                            <lightning-icon icon-name={item.icon} size="small"></lightning-icon>
+                        </div>
+                        <div class="item-text">
+                            <div class="item-label">{item.label}</div>
+                            <div class="item-subtitle">For 10k testing only.</div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container custom-modal">
+                <header class="slds-modal__header selected-issue-header">
+                    <div class="selected-issue-content">
+                        <lightning-icon icon-name={selectedIcon} size="small" class="selected-icon"></lightning-icon>
+                        <div class="selected-issue-text">
+                            <div class="selected-issue-label">{selectedIssueType}</div>
+                            <div class="selected-issue-subtitle">For 10k testing only.</div>
+                        </div>
+                    </div>
+                </header>
+                <div class="slds-modal__content slds-p-around_large">
+
+                    <p class="field-note">Required fields are marked with an asterisk *</p>
+
+                    <lightning-input
+                        label="Raise this request on behalf of *"
+                         value={caseOwner}
+                        data-field="caseOwner"
+                        class="full-width-input">
+                    </lightning-input>
+
+                    <lightning-input
+                        label="Summary *"
+                        value={caseSubject}
+                        onchange={handleInputChange}
+                        data-field="caseSubject"
+                        required
+                        class="full-width-input">
+                    </lightning-input>
+
+                    <lightning-combobox
+                        label="Outbound call needed?"
+                        value={outboundCall}
+                        options={yesNoOptions}
+                        onchange={handleInputChange}
+                        data-field="outboundCall"
+                        class="full-width-input">
+                    </lightning-combobox>
+
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <lightning-input
+                                label="Harmony ID"
+                                value={harmonyId}
+                                onchange={handleInputChange}
+                                data-field="harmonyId"
+                                class="full-width-input">
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col">
+                      <lightning-combobox
+                        label="Sponsor"
+                        value={sponsor}
+                        options={sponsorOptions}
+                        onchange={handleInputChange}
+                        data-field="sponsor"
+                        class="full-width-input">
+                    </lightning-combobox>
+                        </div>
+                    </div>
+
+              <template if:true={showExpediteReason}>
+              <lightning-combobox
+               label="Expedite Reason"
+               value={ExpediteReason}
+               options={expediteOptions}
+               onchange={handleInputChange}
+               data-field="rolloverReason"
+               class="full-width-input">
+              </lightning-combobox>
+              </template>
+
+             <template if:true={showBenefitFields}>
+             <lightning-combobox
+             label="Rollover Reason"
+             value={rolloverReason}
+             options={rolloverOptions}
+        onchange={handleInputChange}
+        data-field="rolloverReason"
+        class="full-width-input">
+    </lightning-combobox>
+
+    <lightning-card>
+        <div class="slds-m-around_medium">
+
+            <label class="slds-form-element__label"><b>Benefit (multi-select)</b></label>
+            <div class="slds-form-element__help">Select all benefits the member needs the rollover for.</div>
+
+            <div class="slds-combobox_container">
+                <div class={dropdownClass}>
+
+                    <div class="custom-combobox-box" onclick={toggleDropdown}>
+                        <span class="custom-placeholder">{selectedLabels}</span>
+                        <lightning-icon
+                            icon-name="utility:chevrondown"
+                            size="x-small"
+                            class="slds-input__icon slds-input__icon_right"
+                        ></lightning-icon>
+                    </div>
+
+                    <div if:true={isOpendropdpwn} class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid">
+                        <ul class="slds-listbox slds-listbox_vertical" role="listbox">
+                            <template for:each={benefitOptionsWithSelection} for:item="option">
+                                <li key={option.value} role="presentation" class="slds-listbox__item listbox-item-padding" onclick={stopClick}>
+                                    <lightning-input
+                                        type="checkbox"
+                                        label={option.label}
+                                        value={option.value}
+                                        checked={option.checked}
+                                        onchange={handleCheckboxChange}>
+                                    </lightning-input>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </lightning-card>
+
+
+<template if:true={showBenefitFields}> <div>
+    <label class="custom-label">Additional Details</label>
+    <lightning-input-rich-text
+        value={additionalDetails}
+        onchange={handleInputChange}
+        data-field="additionalDetails"
+        class="full-width-input">
+    </lightning-input-rich-text>
+</div>
+</template>
+</template>
+
+<template if:true={showIssueTypeCombobox}>
+<lightning-combobox
+    label="What is the issue?"
+    value={rolloverReason}
+    options={rolloverOptions}
+    onchange={handleInputChange}
+    data-field="rolloverReason"
+    class="full-width-input">
+</lightning-combobox>
+</template>
+</div>
+
+                <footer class="slds-modal__footer custom-footer">
+    <div class="slds-grid slds-grid_align-start slds-gutters_small">
+         <lightning-button variant="brand" label="Send" onclick={createJira} class="footer-btn"></lightning-button>
+        <lightning-button label="Cancel" onclick={closeModal} class="footer-btn"></lightning-button>
+    </div>
+</footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
