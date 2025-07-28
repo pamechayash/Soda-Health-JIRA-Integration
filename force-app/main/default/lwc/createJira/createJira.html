@@ -118,7 +118,7 @@
               value={addressVarification}
               options={addressVarificationOptions}
               onchange={handleInputChange}
-              data-field="AddressVar"
+              data-field="addressVarification"
               class="full-width-input">
              </lightning-combobox>
 
@@ -160,7 +160,8 @@
                    type="checkbox"
                   label="Pass along?"
                  checked={passAlong}
-                 onchange={handlePassAlongChange}>
+                 onchange={handleInputChange}
+                  data-field="passAlong">
                </lightning-input>
               </template>
               </div>
@@ -202,7 +203,9 @@
                                         label={option.label}
                                         value={option.value}
                                         checked={option.checked}
-                                        onchange={handleInputChange}>
+                                        onchange={handleInputChange}
+                                          data-field="benefitOptions">
+
                                     </lightning-input>
                                 </li>
                             </template>
