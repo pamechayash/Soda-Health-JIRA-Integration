@@ -63,22 +63,43 @@
                             <lightning-input
                                 label="Harmony ID"
                                 value={harmonyId}
-                                onchange={handleInputChange}
                                 data-field="harmonyId"
                                 class="full-width-input">
                             </lightning-input>
+                            
                         </div>
                         <div class="slds-col">
                       <lightning-combobox
-                        label="Sponsor"
-                        value={sponsor}
-                        options={sponsorOptions}
-                        onchange={handleInputChange}
-                        data-field="sponsor"
-                        class="full-width-input">
-                    </lightning-combobox>
-                        </div>
+                       label="Sponsor"
+                       value={sponsor}
+                       options={sponsorOptions}
+                       disabled={isSponsorDisabled} 
+                       onchange={handleInputChange}
+                       data-field="sponsor"
+                       class="full-width-input">
+                     </lightning-combobox>
+                     </div>
                     </div>
+
+                <template if:true={showMIRReason}>
+              <lightning-combobox
+               label="What is the MIR for?"
+               value={mirReason}
+               options={mirOptions}
+               onchange={handleInputChange}
+               data-field="mirReason"
+               class="full-width-input">
+              </lightning-combobox>
+              </template>
+               <template if:true={showMIRReason}>
+            <lightning-input
+                            label="Amount requested"
+                            value={amountRequested}
+                            onchange={handleInputChange}
+                            data-field="amountRequested"
+                            class="full-width-input">
+                        </lightning-input>
+              </template>
 
               <template if:true={showExpediteReason}>
               <lightning-combobox
@@ -86,18 +107,71 @@
                value={ExpediteReason}
                options={expediteOptions}
                onchange={handleInputChange}
-               data-field="rolloverReason"
+               data-field="expediteReason"
                class="full-width-input">
               </lightning-combobox>
+
+
+        <template if:true={isExpaditeAddressVarFieldVisible}>
+              <lightning-combobox
+              label="Address verification"
+              value={addressVarification}
+              options={addressVarificationOptions}
+              onchange={handleInputChange}
+              data-field="AddressVar"
+              class="full-width-input">
+             </lightning-combobox>
+
+            </template>
+
+
+            <template if:true={isExpaditeRerouteNeeded}>
+             <lightning-input
+             label="Temporary address"
+             value={temporaryAddress}
+             onchange={handleInputChange}
+             data-field="temporaryAddress"
+             class="full-width-input">
+         </lightning-input>
+        </template>
+
               </template>
+               <template if:true={showExpediteReason}>
+            <lightning-input
+                            label="Tracking number"
+                            value={trackingNumber}
+                            onchange={handleInputChange}
+                            data-field="trackingNumber"
+                            class="full-width-input">
+                        </lightning-input>
+              </template>
+              <template if:true={showExpediteReason}>
+            <lightning-input
+                            label="Cost"
+                            value={cost}
+                            onchange={handleInputChange}
+                            data-field="cost"
+                            class="full-width-input">
+                        </lightning-input>
+              </template>
+              <div  class="custom-Checkbox">
+              <template if:true={showExpediteReason}>
+              <lightning-input
+                   type="checkbox"
+                  label="Pass along?"
+                 checked={passAlong}
+                 onchange={handlePassAlongChange}>
+               </lightning-input>
+              </template>
+              </div>
 
              <template if:true={showBenefitFields}>
              <lightning-combobox
-             label="Rollover Reason"
-             value={rolloverReason}
-             options={rolloverOptions}
+             label="Benefit extension reason"
+             value={benefirExtensionReason}
+             options={benefitextensionOptions}
         onchange={handleInputChange}
-        data-field="rolloverReason"
+        data-field="benefirExtensionReason"
         class="full-width-input">
     </lightning-combobox>
 
@@ -128,7 +202,7 @@
                                         label={option.label}
                                         value={option.value}
                                         checked={option.checked}
-                                        onchange={handleCheckboxChange}>
+                                        onchange={handleInputChange}>
                                     </lightning-input>
                                 </li>
                             </template>
@@ -142,27 +216,180 @@
     </lightning-card>
 
 
-<template if:true={showBenefitFields}> <div>
-    <label class="custom-label">Additional Details</label>
-    <lightning-input-rich-text
-        value={additionalDetails}
-        onchange={handleInputChange}
-        data-field="additionalDetails"
-        class="full-width-input">
-    </lightning-input-rich-text>
-</div>
 </template>
-</template>
+
+  
+
+
+    <template if:true={isExpaditeAdditionalFieldVisible}> 
+        <label class="custom-label2">Additional Details</label>
+        <lightning-textarea
+            value={additionalDetails}
+            onchange={handleInputChange}
+            data-field="additionalDetails"
+            class="full-width-input">
+        </lightning-textarea>
+    </template>
 
 <template if:true={showIssueTypeCombobox}>
 <lightning-combobox
     label="What is the issue?"
-    value={rolloverReason}
-    options={rolloverOptions}
+    value={whatIsTheIssue}
+    options={issueOptions}
     onchange={handleInputChange}
-    data-field="rolloverReason"
+    data-field="whatIsTheIssue"
     class="full-width-input">
 </lightning-combobox>
+</template>
+ <!-- For Approved/Declined Swipe Issues -->
+<template if:true={isTransactionSwipeIssues}>
+    <lightning-input label="Store Name" value={storeName} data-field="storeName" onchange={handleInputChange}></lightning-input>
+    <lightning-input label="Item(s) from the transaction" value={transactionItems} data-field="transactionItems" onchange={handleInputChange}></lightning-input>
+    <lightning-input label="Event ID" value={eventId} data-field="eventId" onchange={handleInputChange}></lightning-input>
+    <lightning-input type="date" label="Date of Swipe" value={dateOfSwipe} data-field="dateOfSwipe" onchange={handleInputChange}></lightning-input>
+    <lightning-textarea label="Additional Details" value={additionalDetails} data-field="additionalDetails" onchange={handleInputChange}></lightning-textarea>
+</template>
+
+<!-- For Refund not received -->
+<template if:true={isTransactionRefund}>
+    <lightning-input label="Store Name" value={storeName} data-field="storeName" onchange={handleInputChange}></lightning-input>
+    <lightning-input type="date" label="Date of Swipe" value={dateOfSwipe} data-field="dateOfSwipe" onchange={handleInputChange}></lightning-input>
+    <lightning-textarea label="Additional Details" value={additionalDetails} data-field="additionalDetails" onchange={handleInputChange}></lightning-textarea>
+    <lightning-input type="file" label="Refund Receipt" data-field="refundReceipt" onchange={handleFileUpload}></lightning-input>
+</template>
+
+<!-- For Other -->
+<template if:true={isTransactionOther}>
+    <lightning-textarea label="Additional Details" value={additionalDetails} data-field="additionalDetails" onchange={handleInputChange}></lightning-textarea>
+</template>
+
+
+<template if:true={isItemScannerApprovedItemsVisible}>
+    <lightning-input
+        label="Item(s)"
+        value={itemScannerItems}
+        onchange={handleInputChange}
+        data-field="itemScannerItems"
+        class="full-width-input">
+    </lightning-input>
+</template>
+
+<template if:true={isItemScannerCameraFieldsVisible}>
+    <lightning-combobox
+        label="Operating System"
+        value={itemScannerOS}
+        options={osOptions}
+        onchange={handleInputChange}
+        data-field="itemScannerOS"
+        class="full-width-input">
+    </lightning-combobox>
+    <lightning-input
+        label="Model"
+        value={itemScannerModel}
+        onchange={handleInputChange}
+        data-field="itemScannerModel"
+        class="full-width-input">
+    </lightning-input>
+</template>
+
+<template if:true={isItemScannerAdditionalFieldVisible}>
+    <lightning-textarea
+        label="Additional details"
+        value={additionalDetails}
+        onchange={handleInputChange}
+        data-field="additionalDetails"
+        class="full-width-input">
+    </lightning-textarea>
+</template>
+<template if:true={showBenefitDiscrepancy}>
+    <lightning-input label="Missing Rewards benefit"
+                     value={missingBenefit}
+                     data-field="missingBenefit"
+                     onchange={handleInputChange}>
+    </lightning-input>
+    <lightning-input label="Missing OTC/GRO/DVH benefit"
+                     value={otcGroDvhBenefit}
+                     data-field="otcGroDvhBenefit"
+                     onchange={handleInputChange}>
+    </lightning-input>
+     <label class ="custom-label3">Additional Details</label>
+    <lightning-textarea
+        value={additionalDetails}
+        onchange={handleInputChange}
+        data-field="additionalDetails"
+        class="full-width-input">
+    </lightning-textarea>
+</template>
+
+<template if:true={showBalanceDiscrepancy}>
+    <lightning-input label="What benefit is in question?"
+                     value={balanceBenefitInQuestion}
+                     data-field="balanceBenefitInQuestion"
+                     onchange={handleInputChange}>
+    </lightning-input>
+    <lightning-combobox label="What's the discrepancy?"
+                        value={balanceDiscrepancyReason}
+                        options={balanceDiscrepancyOptions}
+                        data-field="balanceDiscrepancyReason"
+                        onchange={handleInputChange}>
+    </lightning-combobox>
+    <label class="custom-label3">Additional Details</label>
+    <lightning-textarea
+        value={additionalDetails}
+        onchange={handleInputChange}
+        data-field="additionalDetails"
+        class="full-width-input">
+    </lightning-textarea>
+</template>
+
+<template if:true={showOtherDiscrepancy}>
+     <label class ="custom-label3" >Additional Details</label>
+    <lightning-textarea
+        value={additionalDetails}
+        onchange={handleInputChange}
+        data-field="additionalDetails"
+        class="full-width-input">
+    </lightning-textarea>
+</template>
+
+
+<template if:true={isOnlineAppPwResetFieldsVisible}>
+    <lightning-combobox
+        label="Password Reset Sent?"
+        value={pwResetSent}
+        options={yesNoOptions}
+        onchange={handleInputChange}
+        data-field="pwResetSent"
+        class="full-width-input">
+    </lightning-combobox>
+
+    <lightning-combobox
+        label="Junk/Spam Folder Checked?"
+        value={junkSpamChecked}
+        options={yesNoOptions}
+        onchange={handleInputChange}
+        data-field="junkSpamChecked"
+        class="full-width-input">
+    </lightning-combobox>
+</template>
+
+<template if:true={isOnlineAppAdditionalFieldVisible}>
+    <label class="custom-label2">Additional Details</label>
+    <lightning-textarea
+        value={additionalDetails}
+        onchange={handleInputChange}
+        data-field="additionalDetails"
+        class="full-width-input">
+    </lightning-textarea>
+</template>
+<template if:true={showExceptionFreeText}>
+    <label class="custom-label2">Additional Details</label>
+    <lightning-textarea
+        value={additionalDetails}
+        onchange={handleInputChange}
+        data-field="additionalDetails"
+        class="full-width-input">
+    </lightning-textarea>
 </template>
 </div>
 

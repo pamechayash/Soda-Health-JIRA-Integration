@@ -63,6 +63,26 @@
         margin-bottom: -12px !important;
 
 }
+.custom-label3{
+ margin-top: 7px;
+    padding-left: 10px;
+    display: block !important;
+    color: #656563;
+        margin-bottom:-28px !important;
+}
+
+.custom-Checkbox{
+    margin-top: 14px;
+    padding-top: -2px;
+}
+.custom-label2{
+    margin-top: 20px;
+    padding-left: 10px;
+    display: block !important;
+    color: #656563;
+    font-weight: 600;
+        margin-bottom:-23px !important;
+}
 
 .no-bottom-space {
     margin-bottom: 0px !important;

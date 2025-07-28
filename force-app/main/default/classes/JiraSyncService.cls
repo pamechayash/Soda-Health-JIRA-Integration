@@ -1,10 +1,17 @@
+/**
+ * @description       : 
+ * @author            : rob.rastovich
+ * @group             : 
+ * @last modified on  : 07-23-2025
+ * @last modified by  : rob.rastovich
+**/
 public with sharing class JiraSyncService {
     @AuraEnabled(cacheable=true)
     public static Case getCaseData(Id caseId) {
         try {
             System.debug('case id => ' + caseId);
             return [
-                SELECT Id, Subject, Comments, Priority, Status, Owner.Name
+                SELECT Id, Subject, Comments, Priority, Status, Owner.Name,Harmony_ID__c,Account.Short_code__c
                 FROM Case
                 WHERE Id = :caseId
                 LIMIT 1
@@ -27,24 +34,59 @@ public static Map<String, Object> createJiraIssue(Map<String, Object> formData) 
 
     try {
         Id caseId = (Id) formData.get('caseId');
-        Case c = [SELECT Id, Subject, Comments, Priority, Status FROM Case WHERE Id = :caseId LIMIT 1];
+        Case c = [SELECT Id, Subject, Comments, Priority, Status,Harmony_ID__c, Account.Short_code__c, Description FROM Case WHERE Id = :caseId LIMIT 1];
+      String sponsorShortCode;
+        if (c.Account != null && String.isNotBlank(c.Account.Short_code__c)) {
+            sponsorShortCode = c.Account.Short_code__c; 
+        } else {
+            sponsorShortCode = (String) formData.get('sponsor'); 
+        }
+       Map<String, Object> payload = new Map<String, Object>{
+               'caseId'           => c.Id,
+               'summary'          => c.Subject,
+               'priority'         => c.Priority,
+               'status'           => c.Status,
+               'comments'         => c.Comments,
+               'issueType'        => (String)formData.get('issueType'),
+               'benefits'         => (List<Object>)formData.get('benefits'),
+               'outboundCall'     => formData.get('outboundCall'),
+               'harmonyId'        => formData.get('harmonyId'),
+               'sponsor'          => sponsorShortCode,
+               'benefirExtensionReason'  => formData.get('benefirExtensionReason'),
+               'expediteReason'   => formData.get('expediteReason'),
+               'additionalDetails'=> formData.get('additionalDetails'),
+               'caseOwner'       => formData.get('caseOwner'),
+               'description'     => c.Description,
+                'whatIsTheIssue' =>formData.get('whatIsTheIssue'),
+               'ExpediteRequest.addressVerification' => formData.get('ExpediteRequest.addressVerification'),
+                'ExpediteRequest.temporaryAddress' =>formData.get('ExpediteRequest.temporaryAddress'),
+                'ExpediteRequest.TrackingNumber' => formData.get('ExpediteRequest.TrackingNumber'),
+                'ExpediteRequest.Cost'           => formData.get('ExpediteRequest.Cost'),
+                'ExpediteRequest.PassAlong'      => formData.get('ExpediteRequest.PassAlong'),
+                'MakeItRight.Reason'=>formData.get('MakeItRight.Reason'),
+                'MakeItRight.amountRequested'=>formData.get('MakeItRight.amountRequested'),
+                'TransactionIssue.StoreName'            => formData.get('TransactionIssue.StoreName'),
+                'TransactionIssue.TransactionItems'     => formData.get('TransactionIssue.TransactionItems'),
+                'TransactionIssue.EventId'              => formData.get('TransactionIssue.EventId'),
+                'TransactionIssue.DateOfSwipe'          => formData.get('TransactionIssue.DateOfSwipe'),
+                'TransactionIssue.RefundReceipt'        => formData.get('TransactionIssue.RefundReceipt'),
+                'ItemScanner.OS'                        => formData.get('ItemScanner.OS'),
+                'ItemScanner.Items'                     => formData.get('ItemScanner.Items'),
+                'ItemScanner.Model'                     => formData.get('ItemScanner.Model'),
+                'ItemScanner.CameraSettingsReset'       => formData.get('ItemScanner.CameraSettingsReset'),
+                'ItemScanner.PermissionsReset'          => formData.get('ItemScanner.PermissionsReset'),
+                'OnlineApp.AttemptingRegistration'      => formData.get('OnlineApp.AttemptingRegistration'),
+                'OnlineApp.PasswordReset'               => formData.get('OnlineApp.PasswordReset'),
+                'OnlineApp.Other'                       => formData.get('OnlineApp.Other'),
+                'OnlineApp.PasswordResetPWReset'=> formData.get('OnlineApp.PasswordResetPWReset'),
+                'OnlineApp.PasswordResetJunkSpamChecked'=> formData.get('OnlineApp.PasswordResetJunkSpamChecked'),
+                'BenefitDiscrepancy.MissingBenefit'     => formData.get('BenefitDiscrepancy.MissingBenefit'),
+                'BenefitDiscrepancy.OTCGroDvhBenefit'   => formData.get('BenefitDiscrepancy.OTCGroDvhBenefit'),
+                'BenefitDiscrepancy.BalanceBenefitInQuestion' => formData.get('BenefitDiscrepancy.BalanceBenefitInQuestion'),
+                'BenefitDiscrepancy.BalanceDiscrepancyReason' => formData.get('BenefitDiscrepancy.BalanceDiscrepancyReason')
+                };
+       
 
-        Map<String, Object> payload = new Map<String, Object>{
-            'caseId'           => c.Id,
-            'summary'          => c.Subject,
-            'priority'         => c.Priority,
-            'status'           => c.Status,
-            'comments'         => c.Comments,
-            'issueType'        => (String)formData.get('issueType'),
-            'benefits'         => (List<Object>)formData.get('benefits'),
-            'outboundCall'     => formData.get('outboundCall'),
-            'harmonyId'        => formData.get('harmonyId'),
-            'sponsor'          => formData.get('sponsor'),
-            'rolloverReason'   => formData.get('rolloverReason'),
-            'expediteReason'   => formData.get('expediteReason'),
-            'additionalDetails'=> formData.get('additionalDetails'),
-             'caseOwner'=>formData.get('caseOwner')
-        };
 
         HttpRequest req = new HttpRequest();
         req.setEndpoint('https://hooks.zapier.com/hooks/catch/23366882/u3ukl4l/');
